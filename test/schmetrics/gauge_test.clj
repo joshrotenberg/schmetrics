@@ -7,7 +7,6 @@
     (gauge/register "gauge-foo" #(+ 1 2))
     (let [r (gauge/read "gauge-foo")]
       (is (= :gauge-foo (:name r)))
-      (is (isa? (:type r) com.codahale.metrics.Gauge))
       (is (= 3 (:value r)))))
   (testing "gauge read"
     (gauge/register "what" #(java.util.Date.))

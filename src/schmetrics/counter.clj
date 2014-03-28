@@ -1,25 +1,27 @@
 (ns schmetrics.counter
   (:refer-clojure :exclude [inc dec read])
-  (:require [schmetrics.core :refer [context metric-name read-metric]])
+  (:require [schmetrics.registry :refer [ReadMetric read-metric get-registry 
+                                         counter context]])
   (:import [com.codahale.metrics Counter]))
+
+(extend-protocol ReadMetric
+  Counter
+  (read-metric [this] {:count (.getCount this)}))
 
 (defn- retrieve-counter
   [n]
-  (let [registry (get @context :registry)]
-    (.counter registry (name n))))
+  (counter (get-registry) n))
 
 (defn inc 
-   ([name n] 
-     (let [registry (get @context :registry)
-            counter (retrieve-counter name)]
-        (.inc counter n)))
-    ([name] 
-      (inc name 1)))
+  ([name n] 
+     (let [counter (retrieve-counter name)]
+       (.inc counter n)))
+  ([name] 
+     (inc name 1)))
 
 (defn dec
   ([name n]
-     (let [registry (get @context :registry)
-           counter (retrieve-counter name)]
+     (let [counter (retrieve-counter name)]
        (.dec counter n)))
   ([name] 
      (dec name 1)))
