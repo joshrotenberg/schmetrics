@@ -42,22 +42,45 @@ Gauges measure a value at a given point in time. In `schmetrics`, you are essent
 
 ;; when you read the gauge at some later point, the function will be called and it's value returned
 (gauge/read :my-gauge) 
-{:read-time #inst "2014-03-28T01:31:15.269-00:00", 
- :type schmetrics.gauge.proxy$java.lang.Object$Gauge$165337e8, 
- :value 3, ;; this was the result of our gauge function above 
+{:value 3, ;; this was the result of our gauge function above 
  :name :my-gauge}
 
 ```
 
 ### Counters
 
-```clojure
+A Counter ... counts. Up or down.
 
+```clojure
+(require '[schmetrics.counter :as counter])
+
+(counter/inc :my-counter 1)
+(counter/inc :my-counter 2)
+(counter/read :my-counter)
+{:count 3, 
+ :name :my-counter}
+(counter/dec :my-counter 1)
+{:count 2, 
+ :name :my-counter}
 ```
 
 ### Meters
 
+Meters measure the rate of an even over time, i.e. a load average.
+
 ```clojure
+(require '[schmetrics.meter :as meter])
+(meter/mark :my-meter 2)
+(meter/mark :my-meter 3)
+(meter/mark :my-meter 2)
+(meter/mark :my-meter 4)
+(meter/read :my-meter)
+{:mean-rate 0.8747603265851388, 
+ :one-minute-rate 1.3520266487775938, 
+ :five-minute-rate 1.3900828722929706, 
+ :fifteen-minute-rate 1.396675908802938, 
+ :count 11, 
+ :name :my-meter}
 ```
 
 ### Histograms
