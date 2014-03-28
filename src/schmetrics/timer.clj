@@ -32,13 +32,17 @@
   [n]
   (let [timer (retrieve-timer n)
         ctx (.time timer)]
-    (swap! context assoc-in [:timer-context (keyword n)] ctx)))
+    (swap! context assoc-in [:timer-context (keyword n)] ctx))
+  nil)
 
 (defn stop
   [n]
   (let [timer (retrieve-timer n)
         ctx (get-in @context [:timer-context (keyword n)])]
-    (.stop ctx)))
+    (if ctx
+      (swap! context assoc-in [:timer-context (keyword n)] nil)
+      (.stop ctx))
+    nil))
 
 (defn read
   [n]

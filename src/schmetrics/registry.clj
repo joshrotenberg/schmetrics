@@ -18,7 +18,6 @@
   (meter [this n] "register/lookup a meter from the registry")
   (histogram [this n] "register/lookup a histogram from the registry")
   (timer [this n] "register/lookup a timer from the registry"))
-
   
 (extend-protocol LookupMetric
   MetricRegistry
@@ -28,7 +27,7 @@
       (.get gauges (name n))))
   (meter [this n] (.meter this (name n)))
   (counter [this n] (.counter this (name n)))
-  (timer [this n] 
-    (let [t (.timer this (name n))]
-      (swap! context assoc-in [:timer n] t)
-      t)))
+  (timer [this n]  (.timer this (name n))))
+;;    (let [t (.timer this (name n))]
+;;      (swap! context assoc-in [:timer n] t)
+;;      t)))
