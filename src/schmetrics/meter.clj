@@ -13,19 +13,21 @@
                        }))
 
 (defn- retrieve-meter
-  [n]
-  (meter (get-registry) n))
+  [meter-name]
+  (meter (get-registry) meter-name))
 
 (defn mark
-  ([name n]
-     (let [meter (retrieve-meter name)]
-       (.mark meter n)))
-  ([name]
-     (mark name 1)))
+  "Mark meter-name with to-mark, or by 1 if not specified."
+  ([meter-name to-mark]
+     (let [meter (retrieve-meter meter-name)]
+       (.mark meter to-mark)))
+  ([meter-name]
+     (mark meter-name 1)))
 
 (defn read
-  [name]
+  "Read the current value of meter-name."
+  [meter-name]
   (merge 
-   {:name (keyword name)}
-   (read-metric (retrieve-meter name))))
+   {:name (keyword meter-name)}
+   (read-metric (retrieve-meter meter-name))))
    

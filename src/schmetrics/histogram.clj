@@ -21,17 +21,19 @@
        :999th-percentile (.get999thPercentile snapshot)})))
 
 (defn- retrieve-histogram
-  [n]
-  (histogram (get-registry) n))
+  [histogram-name]
+  (histogram (get-registry) histogram-name))
 
 (defn update 
-  [name n]
-  (let [histogram (retrieve-histogram name)]
-    (.update histogram n)))
+  "Update histogram-name with the value in to-update."
+  [histogram-name to-update]
+  (let [histogram (retrieve-histogram histogram-name)]
+    (.update histogram to-update)))
 
 (defn read
-  [name]
+  "Read the current value of histogram-name."
+  [histogram-name]
   (merge
-   {:name (keyword name)}
-   (read-metric (retrieve-histogram name))))
+   {:name (keyword histogram-name)}
+   (read-metric (retrieve-histogram histogram-name))))
 

@@ -9,25 +9,28 @@
   (read-metric [this] {:count (.getCount this)}))
 
 (defn- retrieve-counter
-  [n]
-  (counter (get-registry) n))
+  [counter-name]
+  (counter (get-registry) counter-name))
 
 (defn inc 
-  ([name n] 
-     (let [counter (retrieve-counter name)]
-       (.inc counter n)))
-  ([name] 
-     (inc name 1)))
+  "Increment the counter named counter-name by to-inc, or by 1 if not specified."
+  ([counter-name to-inc] 
+     (let [counter (retrieve-counter counter-name)]
+       (.inc counter to-inc)))
+  ([counter-name] 
+     (inc counter-name 1)))
 
 (defn dec
-  ([name n]
-     (let [counter (retrieve-counter name)]
-       (.dec counter n)))
-  ([name] 
-     (dec name 1)))
+  "Decrement the counter named counter-name by to-dec, or by 1 if not specified."
+  ([counter-name to-dec]
+     (let [counter (retrieve-counter counter-name)]
+       (.dec counter to-dec)))
+  ([counter-name] 
+     (dec counter-name 1)))
 
 (defn read
-  [name]
+  "Returns the current count for counter-name."
+  [counter-name]
   (merge 
-   {:name (keyword name)}
-   (read-metric (retrieve-counter name))))
+   {:name (keyword counter-name)}
+   (read-metric (retrieve-counter counter-name))))

@@ -25,30 +25,40 @@
        :99th-percentile (.get99thPercentile snapshot)
        :999th-percentile (.get999thPercentile snapshot)})))
 
-
 (defn- retrieve-timer
-  [n]
-  (timer (get-registry) n))
+  [timer-name]
+  (timer (get-registry) timer-name))
 
 (defn start
-  [n]
-  (let [timer (retrieve-timer n)
+  "Starts a named timer. Returns nil."
+  [timer-name]
+  (let [timer (retrieve-timer timer-name)
         ctx (.time timer)]
-    (swap! timer-context assoc (keyword n) ctx))
+    (swap! timer-context assoc (keyword timer-name) ctx))
   nil)
 
 (defn stop
-  [n]
-  (let [timer (retrieve-timer n)
-        ctx (get @timer-context (keyword n))]
+  "Stops a named timer. Returns the elapsed time since the timer was started."
+  [timer-name]
+  (let [timer (retrieve-timer timer-name)
+        ctx (get @timer-context (keyword timer-name))]
     (.stop ctx)))
 
 (defn read
-  [n]
+  "Read the values of a (previously run) timer."
+  [timer-name]
   (merge 
-   {:name (keyword n)}
-   (read-metric (retrieve-timer n))))
-        
+   {:name (keyword timer-name)}
+   (read-metric (retrieve-timer timer-name))))
+
+(defmacro with-timer [timer-name & body]
+  "Runs the body with the named timer. Returns the elapsed time in nanoseconds. The 
+   other timer values can be read with timer/read)."
+  `(do
+     (start ~timer-name)
+     ~@body
+     (stop ~timer-name)))
+
     
     
     

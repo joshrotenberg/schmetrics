@@ -7,17 +7,21 @@
   ReadMetric
   (read-metric [this] {:value (.getValue this)}))
 
-(defn retrieve-gauge
-  [n]
-  (gauge (get-registry) n))
+(defn- retrieve-gauge
+  [gauge-name]
+  (gauge (get-registry) gauge-name))
 
-(defn register [n f]
-  (.register (get-registry) (name n)
+(defn register 
+  "Register the function gauge-fn named by the gauge gauge-name. When read, the function's value will
+   be returned."
+  [gauge-name gauge-fn]
+  (.register (get-registry) (name gauge-name)
              (proxy [com.codahale.metrics.Gauge] []
-               (getValue [] (f)))))
-        
+               (getValue [] (gauge-fn)))))
+
 (defn read
-  [name]
+  "Read the current value for gauge-name."
+  [gauge-name]
   (merge
-   {:name (keyword name)}
-   (read-metric (retrieve-gauge name))))
+   {:name (keyword gauge-name)}
+   (read-metric (retrieve-gauge gauge-name))))

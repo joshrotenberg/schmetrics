@@ -4,6 +4,7 @@
 (defonce context (atom {:registry (MetricRegistry.)}))
 
 (defn get-registry 
+  "Returns the MetricRegistry used to register all metrics."
   []
   (get @context :registry))
 
