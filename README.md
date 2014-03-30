@@ -85,12 +85,56 @@ Meters measure the rate of an even over time, i.e. a load average.
 
 ### Histograms
 
+Histograms measure the statistical distribution in a stream of data.
+
 ```clojure
+(require '[schmetrics.histogram :as histogram])
+
+(histogram/update :my-histogram 10)
+(histogram/update :my-histogram 20)
+(histogram/update :my-histogram 30)
+(histogram/update :my-histogram 40)
+(histogram/update :my-histogram 50)
+(histogram/read :my-histogram)
+{:75th-percentile 45.0, 
+ :99th-percentile 50.0, 
+ :stddev 15.811388300841896, 
+ :mean 30.0, 
+ :name :my-histogram, 
+ :median 30.0, 
+ :count 5, 
+ :999th-percentile 50.0, 
+ :max 50, :min 10, 
+ :98th-percentile 50.0, 
+ :95th-percentile 50.0}
 ```
 
 ### Timers
 
 ```clojure
+(require '[schmetrics.timer :as timer])
+
+(timer/start :my-timer)
+(Thread/sleep 2000)
+(timer/stop :my-timer)
+2003765859 ;; returns the elapsed time since start was called
+(timer/read :my-timer)
+{:75th-percentile 2.003765859E9, 
+ :99th-percentile 2.003765859E9, 
+ :five-minute-rate 0.1750346638085895, 
+ :stddev 0.0, 
+ :mean 2.003765859E9, 
+ :one-minute-rate 0.10268342380651845, 
+ :name :my-timer, 
+ :median 2.003765859E9, 
+ :count 1, 
+ :999th-percentile 2.003765859E9, 
+ :max 2003765859, 
+ :mean-rate 0.021349204399746108, 
+ :min 2003765859, 
+ :98th-percentile 2.003765859E9, 
+ :fiteen-minute-rate 0.19130574782060583, 
+ :95th-percentile 2.003765859E9}
 ```
 
 ## License
