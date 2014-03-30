@@ -1,9 +1,7 @@
 (ns schmetrics.registry
   (:import [com.codahale.metrics MetricRegistry Counter Gauge Meter Histogram Timer]))
 
-(defonce context (atom {:registry (MetricRegistry.)
-                        :counters {}
-                        }))
+(defonce context (atom {:registry (MetricRegistry.)}))
 
 (defn get-registry 
   []
@@ -28,6 +26,3 @@
   (meter [this n] (.meter this (name n)))
   (counter [this n] (.counter this (name n)))
   (timer [this n]  (.timer this (name n))))
-;;    (let [t (.timer this (name n))]
-;;      (swap! context assoc-in [:timer n] t)
-;;      t)))

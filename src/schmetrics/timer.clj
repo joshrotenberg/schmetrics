@@ -3,6 +3,8 @@
   (:require [schmetrics.registry :refer [ReadMetric read-metric get-registry timer context]])
   (:import [com.codahale.metrics Timer]))
 
+(defonce timer-context (atom {}))
+
 (extend-type Timer
   ReadMetric
   (read-metric [this] 
@@ -32,17 +34,14 @@
   [n]
   (let [timer (retrieve-timer n)
         ctx (.time timer)]
-    (swap! context assoc-in [:timer-context (keyword n)] ctx))
+    (swap! timer-context assoc (keyword n) ctx))
   nil)
 
 (defn stop
   [n]
   (let [timer (retrieve-timer n)
-        ctx (get-in @context [:timer-context (keyword n)])]
-    (if ctx
-      (swap! context assoc-in [:timer-context (keyword n)] nil)
-      (.stop ctx))
-    nil))
+        ctx (get @timer-context (keyword n))]
+    (.stop ctx)))
 
 (defn read
   [n]
