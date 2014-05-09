@@ -136,6 +136,31 @@ Histograms measure the statistical distribution in a stream of data.
  :fiteen-minute-rate 0.19130574782060583, 
  :95th-percentile 2.003765859E9}
 ```
+## JSON
+
+It's easy enough to turn Clojure data structures into JSON, for sure, but `schmetrics` includes support for the `metrics-json` JSONification if you want it:
+
+```clojure
+(require '[schmetrics.counter :as counter])
+(counter/inc :my-counter 22)
+(counter/read :my-counter)
+{:count 22, :name :my-counter}
+(counter/json :my-counter)
+"{\"count\":22}"
+```
+
+If you JSONify the registry itself, all of your metrics will be included:
+
+```clojure
+(require '[schmetrics.registry :as registry]
+         '[schmetrics.counter :as counter]
+         '[schmetrics.histogram :as histogram])
+(counter/inc :my-counter 22)
+(histogram/update :my-histogram 42)
+(registry/json)
+"{\"version\":\"3.0.0\",\"gauges\":{},\"counters\":{\"my-counter\":{\"count\":22}},\"histograms\":{\"my-histogram\":{\"count\":1,\"max\":42,\"mean\":42.0,\"min\":42,\"p50\":42.0,\"p75\":42.0,\"p95\":42.0,\"p98\":42.0,\"p99\":42.0,\"p999\":42.0,\"stddev\":0.0}},\"meters\":{},\"\
+timers\":{}}"
+```
 
 ## License
 
