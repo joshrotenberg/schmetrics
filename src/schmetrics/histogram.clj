@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [read])
   (:require [schmetrics.registry :refer [ReadMetric read-metric get-registry 
                                          histogram context]])
+  (:require [schmetrics.json :refer [get-mapper]])
   (:import [com.codahale.metrics Histogram]))
 
 (extend-type Histogram
@@ -37,3 +38,7 @@
    {:name (keyword histogram-name)}
    (read-metric (retrieve-histogram histogram-name))))
 
+(defn json
+  "Returns the histogram as a json string."
+  [histogram-name]
+  (.writeValueAsString (get-mapper) (retrieve-histogram histogram-name)))

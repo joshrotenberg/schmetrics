@@ -1,6 +1,7 @@
 (ns schmetrics.meter
   (:refer-clojure :exclude [read])
   (:require [schmetrics.registry :refer [ReadMetric read-metric get-registry meter context]])
+  (:require [schmetrics.json :refer [get-mapper]])
   (:import [com.codahale.metrics Meter]))
 
 (extend-type Meter
@@ -31,3 +32,7 @@
    {:name (keyword meter-name)}
    (read-metric (retrieve-meter meter-name))))
    
+(defn json 
+  "Returns the meter as a json string."
+  [meter-name]
+  (.writeValueAsString (get-mapper) (retrieve-meter meter-name)))

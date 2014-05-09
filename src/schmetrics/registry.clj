@@ -1,5 +1,7 @@
 (ns schmetrics.registry
-  (:import [com.codahale.metrics MetricRegistry Counter Gauge Meter Histogram Timer]))
+  (:require [schmetrics.json :refer [get-mapper]])
+  (:import [com.codahale.metrics MetricRegistry Counter Gauge 
+            Meter Histogram Timer]))
 
 (defonce context (atom {:registry (MetricRegistry.)}))
 
@@ -27,3 +29,8 @@
   (meter [this n] (.meter this (name n)))
   (counter [this n] (.counter this (name n)))
   (timer [this n]  (.timer this (name n))))
+
+(defn json
+  "Return the registry's json representation as a string."
+  []
+  (.writeValueAsString (get-mapper) (get-registry)))

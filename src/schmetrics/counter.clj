@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [inc dec read])
   (:require [schmetrics.registry :refer [ReadMetric read-metric get-registry 
                                          counter context]])
+  (:require [schmetrics.json :refer [get-mapper]])
   (:import [com.codahale.metrics Counter]))
 
 (extend-protocol ReadMetric
@@ -34,3 +35,8 @@
   (merge 
    {:name (keyword counter-name)}
    (read-metric (retrieve-counter counter-name))))
+
+(defn json
+  "Returns the counter as a json string."
+  [counter-name]
+  (.writeValueAsString (get-mapper) (retrieve-counter counter-name)))

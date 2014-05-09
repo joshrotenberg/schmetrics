@@ -1,6 +1,7 @@
 (ns schmetrics.gauge
   (:refer-clojure :exclude [read])
   (:require [schmetrics.registry :refer [ReadMetric read-metric get-registry gauge context]])
+  (:require [schmetrics.json :refer [get-mapper]])
   (:import com.codahale.metrics.Gauge))
 
 (extend-type Gauge
@@ -25,3 +26,8 @@
   (merge
    {:name (keyword gauge-name)}
    (read-metric (retrieve-gauge gauge-name))))
+
+(defn json 
+  "Returns the gauge as a json string."
+  [gauge-name]
+  (.writeValueAsString (get-mapper) (retrieve-gauge gauge-name)))

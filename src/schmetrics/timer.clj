@@ -1,6 +1,7 @@
 (ns schmetrics.timer
   (:refer-clojure :exclude [read])
   (:require [schmetrics.registry :refer [ReadMetric read-metric get-registry timer context]])
+  (:require [schmetrics.json :refer [get-mapper]])
   (:import [com.codahale.metrics Timer]))
 
 (defonce timer-context (atom {}))
@@ -59,8 +60,7 @@
      ~@body
      (stop ~timer-name)))
 
-    
-    
-    
-    
-    
+(defn json 
+  "Returns the timer as a json string."
+  [timer-name]
+  (.writeValueAsString (get-mapper) (retrieve-timer timer-name)))

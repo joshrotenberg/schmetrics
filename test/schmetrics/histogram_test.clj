@@ -1,7 +1,8 @@
 (ns schmetrics.histogram-test
   (:require [clojure.test :refer :all]
             [schmetrics.registry :refer [get-registry histogram]]
-            [schmetrics.histogram :as histogram]))
+            [schmetrics.histogram :as histogram])
+  (:require [cheshire.core :refer [parse-string]]))
 
 (deftest histogram-test
   (testing "registry protocol"
@@ -23,3 +24,9 @@
       (is (= 50.0 (:99th-percentile r)))
       (is (= 50.0 (:999th-percentile r))))))
 
+(deftest histogram-test-json
+  (testing "histogram json"
+    (let [histogram (histogram/update :test-histogram-json 42)
+          json (histogram/json :test-histogram-json)]
+      (is (= (:count (parse-string json true))
+             (:count (histogram/read :test-histogram-json)))))))
