@@ -1,5 +1,7 @@
 # schmetrics
 
+[![Build Status](https://travis-ci.org/joshrotenberg/schmetrics.svg?branch=master)](https://travis-ci.org/joshrotenberg/schmetrics)
+
 A simple Clojure wrapper around Coda Hale's metrics (3.x) library. Support for Gauges, Counters, Meters, Timers and Histograms.
 
 ## Usage
