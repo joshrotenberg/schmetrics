@@ -22,6 +22,20 @@ A simple Clojure wrapper around Coda Hale's metrics (3.x) library. Support for G
 ```
 ## Overview
 
+With leiningen
+```clojure
+[schmetrics "0.1.0"]
+```
+
+or maven
+```xml
+<dependency>
+  <groupId>schmetrics</groupId>
+  <artifactId>schmetrics</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
+
 `schmetrics` is intended to be a thin Clojure wrapper atop Coda Hale's [metrics](http://metrics.codahale.com/) library for measuring the behavior of various aspects of an application. The Java APIs are fairly straightforward and can fairly easily be used directly via Clojure's interop, but this library ties them up and makes them a little more Clojure-y, managing some of the state behind the scenes and exposing only what's necessary to get the job done. Comments, bugs and patches are welcome. 
 
 This project came after a quick solo brainstorming of something useful and entertaining to write during Clojure West 2014. I've been using metrics on the Java side for a few weeks and just wanted to see how it might look in Clojure. So yeah.
@@ -136,6 +150,34 @@ Histograms measure the statistical distribution in a stream of data.
  :fiteen-minute-rate 0.19130574782060583, 
  :95th-percentile 2.003765859E9}
 ```
+## JSON
+
+It's easy enough to turn Clojure data structures into JSON, for sure, but `schmetrics` includes support for the `metrics-json` JSONification if you want it:
+
+```clojure
+(require '[schmetrics.counter :as counter])
+(counter/inc :my-counter 22)
+(counter/read :my-counter)
+{:count 22, :name :my-counter}
+(counter/json :my-counter)
+"{\"count\":22}"
+```
+
+If you JSONify the registry itself, all of your metrics will be included:
+
+```clojure
+(require '[schmetrics.registry :as registry]
+         '[schmetrics.counter :as counter]
+         '[schmetrics.histogram :as histogram])
+(counter/inc :my-counter 22)
+(histogram/update :my-histogram 42)
+(registry/json)
+"{\"version\":\"3.0.0\",\"gauges\":{},\"counters\":{\"my-counter\":{\"count\":22}},\"histograms\":{\"my-histogram\":{\"count\":1,\"max\":42,\"mean\":42.0,\"min\":42,\"p50\":42.0,\"p75\":42.0,\"p95\":42.0,\"p98\":42.0,\"p99\":42.0,\"p999\":42.0,\"stddev\":0.0}},\"meters\":{},\"\
+timers\":{}}"
+```
+## History
+
+* Version 0.1.0 - 05/09/14 - initial version pushed to clojars
 
 ## License
 
