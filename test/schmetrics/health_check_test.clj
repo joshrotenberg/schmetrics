@@ -28,7 +28,6 @@
     (health-check/register :proxy-unhealthy-exceptionthrown 
                            (proxy [com.codahale.metrics.health.HealthCheck] []
                              (check [] (throw (Exception. "doof")))))
-    
 
     (health-check/register :fn-healthy-noarg #(health-check/healthy))
     (health-check/register :fn-healthy-strarg #(health-check/healthy "check it"))
@@ -38,6 +37,13 @@
     (health-check/register :fn-unhealthy-formatarg #(health-check/unhealthy "very %s %d" "bad" 42))
     (health-check/register :fn-unhealthy-exceptionarg #(health-check/unhealthy (Exception. "dude this sucks")))
     (health-check/register :fn-unhealthy-exceptionthrown #(health-check/unhealthy (throw (Exception. "i know right?"))))
+    
+    (is (= (health-check/get-names)
+           [:fn-healthy-formatarg :fn-healthy-noarg :fn-healthy-strarg :fn-unhealthy-exceptionarg 
+            :fn-unhealthy-exceptionthrown :fn-unhealthy-formatarg :fn-unhealthy-strarg 
+            :proxy-healthy-formatarg :proxy-healthy-noarg :proxy-healthy-strarg 
+            :proxy-unhealthy-exceptionarg :proxy-unhealthy-exceptionthrown 
+            :proxy-unhealthy-formatarg :proxy-unhealthy-strarg]))
 
     (let [health-checks (health-check/run-health-checks)]
       (is (= (:proxy-healthy-noarg health-checks)
@@ -79,5 +85,12 @@
              {:healthy false, :message "i know right?"}))
       (is (= (.getMessage (get-in health-checks [:fn-unhealthy-exceptionthrown :error]))
              (get-in health-checks [:fn-unhealthy-exceptionthrown :message]))))))
+
+(deftest health-check-register-unregister-test
+  (testing "health check registration/unregistration"
+    (health-check/register :my-health-check (fn [] (health-check/healthy)))
+    (health-check/run-health-check :my-health-check))
+    (health-check/unregister :my-health-check)
+    (is (thrown? java.util.NoSuchElementException (health-check/run-health-check :my-health-check))))
 
   
