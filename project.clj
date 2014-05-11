@@ -7,7 +7,6 @@
                  [com.codahale.metrics/metrics-core "3.0.2"]
                  [com.codahale.metrics/metrics-json "3.0.2"]
                  [com.codahale.metrics/metrics-healthchecks "3.0.2"]
-                 [com.fasterxml.jackson.core/jackson-databind "2.2.2"]
                  [cheshire "5.3.1" :scope "test"]])
 
 
