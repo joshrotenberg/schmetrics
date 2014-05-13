@@ -1,14 +1,14 @@
 (ns schmetrics.health-check
-  (:require [schmetrics.json :refer [get-mapper]])
+  (:require [schmetrics.json :refer [AsJson get-healthcheck-mapper]])
   (:import [com.codahale.metrics.health HealthCheckRegistry HealthCheck 
             HealthCheck$Result]))
 
-(defonce context (atom {:registry (HealthCheckRegistry.)}))
+(defonce context (atom {:default-registry (HealthCheckRegistry.)}))
 
 (defn get-registry
   "Returns the HealthCheckRegistry used to register all health checks."
   []
-  (get @context :registry))
+  (get @context :default-registry))
 
 (defn register
   "Register a health check in the registry."
@@ -64,5 +64,23 @@ message, or two or more arguments to return a formatted string message."
      (HealthCheck$Result/unhealthy format (into-array Object args))))
 
 (defn json
-  []
-  (.writeValueAsString (get-mapper) (run-health-checks)))
+  "Returns or writes the health check as json, depending on the input. With no arguments, returns the metrics-json health check value
+   as a string. Use :as :bytes for a byte array instead (or :as :string if you want to be explicit). If given a single value argument, 
+   takes one of the following types; java.io.File, com.fasterxml.jackson.core.JsonGenerator, java.io.OutputStream, or java.io.Writer, 
+   and writes the json represntation to that object."
+  ([health-check-name]
+     (let [hc (.runHealthCheck (get-registry) (name health-check-name))]
+       (.writeValueAsString (get-healthcheck-mapper) hc)))
+  ([health-check-name & rest]
+     (let [hc (.runHealthCheck (get-registry) (name health-check-name))]
+       (if (= 2 (count rest)) ;; handle :as <type>
+         (let [{:keys [as]} rest]
+           (condp = as
+             :string (.writeValueAsString (get-healthcheck-mapper) hc)
+             :bytes (.writeValueAsBytes (get-healthcheck-mapper) hc)
+             (.writeValueAsString (get-healthcheck-mapper) hc)))
+         ;; XXX should probably check the type here. see
+         ;; http://fasterxml.github.io/jackson-databind/javadoc/2.0.0/com/fasterxml/jackson/databind/ObjectMapper.html
+         ;; for the options for writeValue
+         (.writeValue (get-healthcheck-mapper) (first rest) hc)))))
+
