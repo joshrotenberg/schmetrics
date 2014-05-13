@@ -7,12 +7,17 @@
 
 (defn get-registry
   "Returns the HealthCheckRegistry used to register all health checks."
-  []
-  (get @context :default-registry))
+  ([]
+     (get @context :default-registry))
+  ([registry-name]
+     (let [r (get @context (keyword registry-name))]
+       (when (nil? r)
+         (swap! context assoc (keyword registry-name) (HealthCheckRegistry.)))
+       (get @context (keyword registry-name)))))
 
 (defn register
   "Register a health check in the registry."
-  [health-check-name health-check]
+  [health-check-name health-check & rest]
   (if (fn? health-check)
     (.register (get-registry) (name health-check-name) 
                (proxy [com.codahale.metrics.health.HealthCheck] []

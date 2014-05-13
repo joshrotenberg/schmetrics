@@ -10,6 +10,11 @@
   []
   (get @context :registry))
 
+(defn remove-metric
+  "Removes the metric from the registry."
+  [metric-name]
+  (.remove (get-registry) (name metric-name)))
+
 (defprotocol ReadMetric
   (read-metric [this] "Read the various values of a metric and return a map"))
 
@@ -31,6 +36,6 @@
   (timer [this n]  (.timer this (name n))))
 
 (defn json
-  "Return the registry's json representation as a string."
-  []
-  (.writeValueAsString (get-mapper) (get-registry)))
+   "Return the registry's json representation as a string."
+   []
+   (.writeValueAsString (get-mapper) (get-registry)))

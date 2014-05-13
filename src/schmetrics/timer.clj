@@ -26,14 +26,15 @@
        :99th-percentile (.get99thPercentile snapshot)
        :999th-percentile (.get999thPercentile snapshot)})))
 
-(defn- retrieve-timer
+(defn get-timer
+  "Get the timer object from the registry."
   [timer-name]
   (timer (get-registry) timer-name))
 
 (defn start
   "Starts a named timer. Returns nil."
   [timer-name]
-  (let [timer (retrieve-timer timer-name)
+  (let [timer (get-timer timer-name)
         ctx (.time timer)]
     (swap! timer-context assoc (keyword timer-name) ctx))
   nil)
@@ -41,7 +42,7 @@
 (defn stop
   "Stops a named timer. Returns the elapsed time since the timer was started."
   [timer-name]
-  (let [timer (retrieve-timer timer-name)
+  (let [timer (get-timer timer-name)
         ctx (get @timer-context (keyword timer-name))]
     (.stop ctx)))
 
@@ -50,7 +51,7 @@
   [timer-name]
   (merge 
    {:name (keyword timer-name)}
-   (read-metric (retrieve-timer timer-name))))
+   (read-metric (get-timer timer-name))))
 
 (defmacro with-timer [timer-name & body]
   "Runs the body with the named timer. Returns the elapsed time in nanoseconds. The 
@@ -63,4 +64,4 @@
 (defn json 
   "Returns the timer as a json string."
   [timer-name]
-  (.writeValueAsString (get-mapper) (retrieve-timer timer-name)))
+  (.writeValueAsString (get-mapper) (get-timer timer-name)))

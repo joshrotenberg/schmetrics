@@ -8,7 +8,8 @@
   ReadMetric
   (read-metric [this] {:value (.getValue this)}))
 
-(defn- retrieve-gauge
+(defn get-gauge
+  "Get the gauge object from the registry."
   [gauge-name]
   (gauge (get-registry) gauge-name))
 
@@ -25,9 +26,9 @@
   [gauge-name]
   (merge
    {:name (keyword gauge-name)}
-   (read-metric (retrieve-gauge gauge-name))))
+   (read-metric (get-gauge gauge-name))))
 
 (defn json 
   "Returns the gauge as a json string."
   [gauge-name]
-  (.writeValueAsString (get-mapper) (retrieve-gauge gauge-name)))
+  (.writeValueAsString (get-mapper) (get-gauge gauge-name)))
