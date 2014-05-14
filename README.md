@@ -152,16 +152,43 @@ Histograms measure the statistical distribution in a stream of data.
  :fiteen-minute-rate 0.19130574782060583, 
  :95th-percentile 2.003765859E9}
 ```
+
+## Registry
+
+`schmetrics` pretty much hides the `metrics` registry from normal usage, but there are a few things you might need:
+
+```clojure
+(require '[schmetrics.registry :as registry]
+         '[schmetrics.counter :as counter])
+(counter/inc :my-counter 22)
+(counter/read :my-counter0
+{:count 22, :name :my-counter}
+(registry/remove-metric :my-counter)
+(counter/read :my-counter)
+{:count 0, :name :my-counter}
+;; note that since registration of a metric is implicit, remove essentially resets a metric, because the next time you call it it will
+;; automatically re-register
+(registry/get-metric-names)
+[:my-counter]
+(registery/get-metrics)
+{:my-counter #<Counter com.codahale.metrics.Counter@7f04eeb6>}
+(counter/inc :my-other-counter)
+(registry/get-counters)
+{:my-other-counter #<Counter com.codahale.metrics.Counter@733636ed>, :my-counter #<Counter com.codahale.metrics.Counter@7f04eeb6>}
+;; and so on for the other metric types
+```
+
 ## JSON
 
 It's easy enough to turn Clojure data structures into JSON, for sure, but `schmetrics` includes support for the `metrics-json` JSONification if you want it:
 
 ```clojure
-(require '[schmetrics.counter :as counter])
+(require '[schmetrics.counter :as counter] 
+	 '[schmetrics.json :as json])
 (counter/inc :my-counter 22)
 (counter/read :my-counter)
 {:count 22, :name :my-counter}
-(counter/json :my-counter)
+(json/as-string (counter/get-counter :my-counter))
 "{\"count\":22}"
 ```
 
@@ -170,16 +197,23 @@ If you JSONify the registry itself, all of your metrics will be included:
 ```clojure
 (require '[schmetrics.registry :as registry]
          '[schmetrics.counter :as counter]
-         '[schmetrics.histogram :as histogram])
+         '[schmetrics.histogram :as histogram]
+	 '[schmetrics.json :as json])
 (counter/inc :my-counter 22)
 (histogram/update :my-histogram 42)
-(registry/json)
+(json/as-string (registry/get-registry))
 "{\"version\":\"3.0.0\",\"gauges\":{},\"counters\":{\"my-counter\":{\"count\":22}},\"histograms\":{\"my-histogram\":{\"count\":1,\"max\":42,\"mean\":42.0,\"min\":42,\"p50\":42.0,\"p75\":42.0,\"p95\":42.0,\"p98\":42.0,\"p99\":42.0,\"p999\":42.0,\"stddev\":0.0}},\"meters\":{},\"\
 timers\":{}}"
 ```
+
 ## History
 
 * Version 0.1.0 - 05/09/14 - initial version pushed to clojars
+
+## TODO
+
+* initial support for health checks is in, need to clean up and document
+* support multiple registries
 
 ## License
 

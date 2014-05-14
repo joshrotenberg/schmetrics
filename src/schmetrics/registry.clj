@@ -20,6 +20,40 @@
   []
   (into [] (map keyword (.getNames (get-registry)))))
 
+(defn- keywordize-keys
+  [m]
+  (zipmap (map keyword (keys m)) (vals m)))
+
+(defn get-gauges
+  "Returns a map of all the currently registered gauges."
+  []
+  (keywordize-keys (.getGauges (get-registry))))
+
+(defn get-counters
+  "Returns a map of all the currently registered counters."
+  []
+  (keywordize-keys (.getCounters (get-registry))))
+
+(defn get-histograms
+  "Returns a map of all the currently registered histograms."
+  []
+  (keywordize-keys (.getHistograms (get-registry))))
+
+(defn get-meters
+  "Returns a map of all the currently registered meters."
+  []
+  (keywordize-keys (.getMeters (get-registry))))
+
+(defn get-timers
+  "Returns a map of all the currently registered timers."
+  []
+  (keywordize-keys (.getTimers (get-registry))))
+
+(defn get-metrics
+  "Returns a map of all the currently registered metrics."
+  []
+  (keywordize-keys (.getMetrics (get-registry))))
+
 (defprotocol ReadMetric
   (read-metric [this] "Read the various values of a metric and return a map"))
 
