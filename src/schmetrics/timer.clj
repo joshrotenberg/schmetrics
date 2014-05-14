@@ -60,8 +60,3 @@
      (start ~timer-name)
      ~@body
      (stop ~timer-name)))
-
-(defn json 
-  "Returns the timer as a json string."
-  [timer-name]
-  (.writeValueAsString (get-mapper) (get-timer timer-name)))

@@ -29,7 +29,7 @@
   [health-check-name]
   (.unregister (get-registry) (name health-check-name)))
 
-(defn get-names
+(defn get-healthcheck-names
   "Get the names of registered health checks."
   []
   (into [] (map keyword (.getNames (get-registry)))))
@@ -52,7 +52,7 @@
 
 (defn healthy
   "Wraps the HealthCheck.Result healthy static method. Call with no arguments to simply respond healthy with no 
-message, or one or more args to return a formatted string message."
+   message, or one or more args to return a formatted string message."
   ([]
      (HealthCheck$Result/healthy))
   ([str]

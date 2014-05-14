@@ -1,5 +1,5 @@
 (ns schmetrics.json
-  (:import [com.codahale.metrics Metric]
+  (:import [com.codahale.metrics MetricRegistry Metric]
            [com.codahale.metrics.health HealthCheck$Result]
            [com.codahale.metrics.json MetricsModule HealthCheckModule]
            com.fasterxml.jackson.databind.ObjectMapper
@@ -26,17 +26,25 @@
 (defprotocol AsJson
   (as-string [this] "get the stringified json.")
   (as-bytes [this] "get the json value as a byte array.")
-  (as-stream [this s] "get the json value on the given stream."))
+  (to-stream [this s] "write the json value to the given stream.")
+  (to-file [this f] "write the json value to the given file.")
+  (to-generator [this g] "write the json value to the given generator."))
 
 (extend-type Metric
   AsJson
   (as-string [this] (.writeValueAsString (get-mapper) this))
   (as-bytes [this] (.writeValueAsBytes (get-mapper) this))
-  )
+  (to-stream [this s] (.writeValue (get-mapper) s this))
+  (to-file [this f] (.writeValue (get-mapper) f this))
+  (to-generator [this g] (.writeValue (get-mapper) g this)))
 
-(extend-type HealthCheck$Result
+(extend-type MetricRegistry
   AsJson
-  (as-string [this] (.writeValueAsString (get-healthcheck-mapper) this)))
+  (as-string [this] (.writeValueAsString (get-mapper) this))
+  (as-bytes [this] (.writeValueAsBytes (get-mapper) this))
+  (to-stream [this s] (.writeValue (get-mapper) s this))
+  (to-file [this f] (.writeValue (get-mapper) f this))
+  (to-generator [this g] (.writeValue (get-mapper) g this)))
 
 (defmacro defjson-fn 
   [name doc json-fn get-fn]

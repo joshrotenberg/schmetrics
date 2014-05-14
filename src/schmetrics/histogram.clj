@@ -38,7 +38,3 @@
    {:name (keyword histogram-name)}
    (read-metric (get-histogram histogram-name))))
 
-(defn json
-  "Returns the histogram as a json string."
-  [histogram-name]
-  (.writeValueAsString (get-mapper) (get-histogram histogram-name)))

@@ -1,6 +1,7 @@
 (ns schmetrics.gauge-test
   (:require [clojure.test :refer :all]
-            [schmetrics.gauge :as gauge])
+            [schmetrics.gauge :as gauge]
+            [schmetrics.json :as json])
   (:require [cheshire.core :refer [parse-string]]))
 
 (deftest gauge-test
@@ -20,7 +21,7 @@
   (testing "gauge json"
     (gauge/register :test-gauge-json #(+ 40 2))
     (let [gauge (gauge/read :test-gauge-json)
-          json (gauge/json :test-gauge-json)]
+          json (json/as-string (gauge/get-gauge :test-gauge-json))]
       (is (= (:value (parse-string json true))
              (:value (gauge/read :test-gauge-json)))))))
 

@@ -37,7 +37,3 @@
    {:name (keyword counter-name)}
    (read-metric (get-counter counter-name))))
 
-(defn json
-  "Returns the counter as a json string."
-  [counter-name]
-  (.writeValueAsString (get-mapper) (get-counter counter-name)))

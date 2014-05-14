@@ -1,5 +1,5 @@
 (ns schmetrics.registry
-  (:require [schmetrics.json :refer [get-mapper]])
+  (:require [schmetrics.json :as json])
   (:import [com.codahale.metrics MetricRegistry Counter Gauge 
             Meter Histogram Timer]))
 
@@ -14,6 +14,11 @@
   "Removes the metric from the registry."
   [metric-name]
   (.remove (get-registry) (name metric-name)))
+
+(defn get-metric-names
+  "Get a vector of all the registered metric names."
+  []
+  (into [] (map keyword (.getNames (get-registry)))))
 
 (defprotocol ReadMetric
   (read-metric [this] "Read the various values of a metric and return a map"))
@@ -34,8 +39,3 @@
   (meter [this n] (.meter this (name n)))
   (counter [this n] (.counter this (name n)))
   (timer [this n]  (.timer this (name n))))
-
-(defn json
-   "Return the registry's json representation as a string."
-   []
-   (.writeValueAsString (get-mapper) (get-registry)))

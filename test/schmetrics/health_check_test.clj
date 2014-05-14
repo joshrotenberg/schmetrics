@@ -79,7 +79,7 @@
              {:healthy false, :message "i know right?"}))
       (is (= (.getMessage (get-in health-checks [:fn-unhealthy-exceptionthrown :error]))
              (get-in health-checks [:fn-unhealthy-exceptionthrown :message]))))
-    (doseq [hc (health-check/get-names)]
+    (doseq [hc (health-check/get-healthcheck-names)]
       (health-check/unregister hc))))
 
 (deftest health-check-register-unregister-test

@@ -28,7 +28,3 @@
    {:name (keyword gauge-name)}
    (read-metric (get-gauge gauge-name))))
 
-(defn json 
-  "Returns the gauge as a json string."
-  [gauge-name]
-  (.writeValueAsString (get-mapper) (get-gauge gauge-name)))

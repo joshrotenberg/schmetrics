@@ -33,4 +33,3 @@
    {:name (keyword meter-name)}
    (read-metric (get-meter meter-name))))
 
-(json/defjson-fn "json-as-string" "Get the meter value as a json string." json/as-string get-meter)

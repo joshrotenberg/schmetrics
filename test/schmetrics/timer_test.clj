@@ -1,7 +1,8 @@
 (ns schmetrics.timer-test
   (:require [clojure.test :refer :all]
             [schmetrics.registry :refer [get-registry timer]]
-            [schmetrics.timer :as timer])
+            [schmetrics.timer :as timer]
+            [schmetrics.json :as json])
   (:require [cheshire.core :refer [parse-string]]))
 
 (deftest timer-test
@@ -27,7 +28,7 @@
     (Thread/sleep 2000)
     (timer/stop :test-timer-json)
     (let [timer (timer/read :test-timer-json)
-          json (timer/json :test-timer-json)]
+          json (json/as-string (timer/get-timer :test-timer-json))]
       (is (= (:count timer) 
              (:count (parse-string json true)))))))
 

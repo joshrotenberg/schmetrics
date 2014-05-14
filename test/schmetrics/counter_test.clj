@@ -1,7 +1,8 @@
 (ns schmetrics.counter-test
   (:require [clojure.test :refer :all]
             [schmetrics.registry :refer [get-registry counter]]
-            [schmetrics.counter :as counter])
+            [schmetrics.counter :as counter]
+            [schmetrics.json :as json])
   (:require [cheshire.core :refer [parse-string]]))
 
 (deftest counter-test
@@ -25,6 +26,6 @@
 (deftest counter-test-json
   (testing "counter json"
     (let [counter (counter/inc :test-counter-json 42)
-          json (counter/json :test-counter-json)]
+          json (json/as-string (counter/get-counter :test-counter-json))]
       (is (= (:count (parse-string json true))
              (:count (counter/read :test-counter-json)))))))
