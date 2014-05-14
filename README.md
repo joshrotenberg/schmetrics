@@ -26,7 +26,7 @@ A simple Clojure wrapper around Coda Hale's metrics (3.x) library. Support for G
 
 With leiningen
 ```clojure
-[schmetrics "0.2.0"]
+[schmetrics "0.2.1"]
 ```
 
 or maven
@@ -34,7 +34,7 @@ or maven
 <dependency>
   <groupId>schmetrics</groupId>
   <artifactId>schmetrics</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
 </dependency>
 ```
 
@@ -208,6 +208,7 @@ timers\":{}}"
 
 ## History
 
+* Version 0.2.1 - 05/14/14 - repush with doc updates
 * Version 0.2.0 - 05/14/14 - updates to json api, initial health check api, add more registry functionality
 * Version 0.1.0 - 05/09/14 - initial version pushed to clojars
 
