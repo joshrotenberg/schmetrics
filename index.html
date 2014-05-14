@@ -1,0 +1,270 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Schmetrics by joshrotenberg</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Schmetrics</h1>
+        <p>Clojure wrapper around Coda Hale&#39;s metrics (3.x)</p>
+
+        <p class="view"><a href="https://github.com/joshrotenberg/schmetrics">View the Project on GitHub <small>joshrotenberg/schmetrics</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/joshrotenberg/schmetrics/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/joshrotenberg/schmetrics/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/joshrotenberg/schmetrics">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="schmetrics" class="anchor" href="#schmetrics"><span class="octicon octicon-link"></span></a>schmetrics</h1>
+
+<p><a href="https://travis-ci.org/joshrotenberg/schmetrics"><img src="https://travis-ci.org/joshrotenberg/schmetrics.svg?branch=master" alt="Build Status"></a></p>
+
+<p>A simple Clojure wrapper around Coda Hale's metrics (3.x) library. Support for Gauges, Counters, Meters, Timers and Histograms.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<div class="highlight highlight-clojure"><pre><span class="p">(</span><span class="kd">ns </span><span class="nv">my.thing</span>
+ <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">schmetrics.counter</span> <span class="ss">:as</span> <span class="nv">counter</span><span class="p">]))</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">my-func</span>
+  <span class="p">[]</span>
+  <span class="c1">;; do some stuff</span>
+  <span class="p">(</span><span class="nf">counter/inc</span> <span class="ss">:my-func-counter</span><span class="p">))</span>
+
+<span class="p">(</span><span class="nb">dotimes </span><span class="p">[</span><span class="nv">x</span> <span class="mi">123</span><span class="p">]</span> <span class="p">(</span><span class="nf">my-func</span><span class="p">))</span>
+<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">r</span> <span class="p">(</span><span class="nf">counter/read</span> <span class="ss">:my-func-counter</span><span class="p">)]</span>
+  <span class="p">(</span><span class="ss">:count</span> <span class="nv">r</span><span class="p">))</span> <span class="c1">;; 123</span>
+
+<span class="c1">;; ...</span>
+
+</pre></div>
+
+<h2>
+<a name="overview" class="anchor" href="#overview"><span class="octicon octicon-link"></span></a>Overview</h2>
+
+<p>With leiningen</p>
+
+<div class="highlight highlight-clojure"><pre><span class="p">[</span><span class="nv">schmetrics</span> <span class="s">"0.2.1"</span><span class="p">]</span>
+</pre></div>
+
+<p>or maven</p>
+
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>schmetrics<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>schmetrics<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>0.2.1<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+
+<p><code>schmetrics</code> is intended to be a thin Clojure wrapper atop Coda Hale's <a href="http://metrics.codahale.com/">metrics</a> library for measuring the behavior of various aspects of an application. The Java APIs are fairly straightforward and can fairly easily be used directly via Clojure's interop, but this library ties them up and makes them a little more Clojure-y, managing some of the state behind the scenes and exposing only what's necessary to get the job done. Comments, bugs and patches are welcome. </p>
+
+<p>This project came after a quick solo brainstorming of something useful and entertaining to write during Clojure West 2014. I've been using metrics on the Java side for a few weeks and just wanted to see how it might look in Clojure. So yeah.</p>
+
+<h2>
+<a name="metrics" class="anchor" href="#metrics"><span class="octicon octicon-link"></span></a>Metrics</h2>
+
+<p><code>schmetrics</code> has a fairly regular API with a few exceptions noted inline below in the docs. You create a unique metric on the fly by calling it's specific namespaced function with a keyword or string, and then when you want to know the value of the metric, you call it's read function, which will return a map containing the metric specific values and some meta data.</p>
+
+<h3>
+<a name="gauges" class="anchor" href="#gauges"><span class="octicon octicon-link"></span></a>Gauges</h3>
+
+<p>Gauges measure a value at a given point in time. In <code>schmetrics</code>, you are essentially creating a closure around some value that may be harder to reach later on, and you then have the ability to read its value at a later point. The metrics example shows a Gauge closing over the size of a queue in a queue manager class' constructor. Because we have functions as first class values in Clojure, this may not really need an equivalent, but its there for completeness and might be useful in other situations:</p>
+
+<div class="highlight highlight-clojure"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.gauge</span> <span class="ss">:as</span> <span class="nv">gauge</span><span class="p">])</span>
+
+<span class="c1">;; register a gauge with a unique name and a function that takes no arguments ...</span>
+<span class="p">(</span><span class="nf">gauge/register</span> <span class="ss">:my-gauge</span> <span class="o">#</span><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">;; when you read the gauge at some later point, the function will be called and it's value returned</span>
+<span class="p">(</span><span class="nf">gauge/read</span> <span class="ss">:my-gauge</span><span class="p">)</span> 
+<span class="p">{</span><span class="ss">:value</span> <span class="mi">3</span>, <span class="c1">;; this was the result of our gauge function above </span>
+ <span class="ss">:name</span> <span class="ss">:my-gauge</span><span class="p">}</span>
+
+</pre></div>
+
+<h3>
+<a name="counters" class="anchor" href="#counters"><span class="octicon octicon-link"></span></a>Counters</h3>
+
+<p>A Counter ... counts. Up or down.</p>
+
+<div class="highlight highlight-clojure"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.counter</span> <span class="ss">:as</span> <span class="nv">counter</span><span class="p">])</span>
+
+<span class="p">(</span><span class="nf">counter/inc</span> <span class="ss">:my-counter</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">counter/inc</span> <span class="ss">:my-counter</span> <span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">counter/read</span> <span class="ss">:my-counter</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:count</span> <span class="mi">3</span>, 
+ <span class="ss">:name</span> <span class="ss">:my-counter</span><span class="p">}</span>
+<span class="p">(</span><span class="nf">counter/dec</span> <span class="ss">:my-counter</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:count</span> <span class="mi">2</span>, 
+ <span class="ss">:name</span> <span class="ss">:my-counter</span><span class="p">}</span>
+</pre></div>
+
+<h3>
+<a name="meters" class="anchor" href="#meters"><span class="octicon octicon-link"></span></a>Meters</h3>
+
+<p>Meters measure the rate of an even over time, i.e. a load average.</p>
+
+<div class="highlight highlight-clojure"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.meter</span> <span class="ss">:as</span> <span class="nv">meter</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">meter/mark</span> <span class="ss">:my-meter</span> <span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">meter/mark</span> <span class="ss">:my-meter</span> <span class="mi">3</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">meter/mark</span> <span class="ss">:my-meter</span> <span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">meter/mark</span> <span class="ss">:my-meter</span> <span class="mi">4</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">meter/read</span> <span class="ss">:my-meter</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:mean-rate</span> <span class="mf">0.8747603265851388</span>, 
+ <span class="ss">:one-minute-rate</span> <span class="mf">1.3520266487775938</span>, 
+ <span class="ss">:five-minute-rate</span> <span class="mf">1.3900828722929706</span>, 
+ <span class="ss">:fifteen-minute-rate</span> <span class="mf">1.396675908802938</span>, 
+ <span class="ss">:count</span> <span class="mi">11</span>, 
+ <span class="ss">:name</span> <span class="ss">:my-meter</span><span class="p">}</span>
+</pre></div>
+
+<h3>
+<a name="histograms" class="anchor" href="#histograms"><span class="octicon octicon-link"></span></a>Histograms</h3>
+
+<p>Histograms measure the statistical distribution in a stream of data.</p>
+
+<div class="highlight highlight-clojure"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.histogram</span> <span class="ss">:as</span> <span class="nv">histogram</span><span class="p">])</span>
+
+<span class="p">(</span><span class="nf">histogram/update</span> <span class="ss">:my-histogram</span> <span class="mi">10</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">histogram/update</span> <span class="ss">:my-histogram</span> <span class="mi">20</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">histogram/update</span> <span class="ss">:my-histogram</span> <span class="mi">30</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">histogram/update</span> <span class="ss">:my-histogram</span> <span class="mi">40</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">histogram/update</span> <span class="ss">:my-histogram</span> <span class="mi">50</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">histogram/read</span> <span class="ss">:my-histogram</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:75th-percentile</span> <span class="mf">45.0</span>, 
+ <span class="ss">:99th-percentile</span> <span class="mf">50.0</span>, 
+ <span class="ss">:stddev</span> <span class="mf">15.811388300841896</span>, 
+ <span class="ss">:mean</span> <span class="mf">30.0</span>, 
+ <span class="ss">:name</span> <span class="ss">:my-histogram</span>, 
+ <span class="ss">:median</span> <span class="mf">30.0</span>, 
+ <span class="ss">:count</span> <span class="mi">5</span>, 
+ <span class="ss">:999th-percentile</span> <span class="mf">50.0</span>, 
+ <span class="ss">:max</span> <span class="mi">50</span>, <span class="ss">:min</span> <span class="mi">10</span>, 
+ <span class="ss">:98th-percentile</span> <span class="mf">50.0</span>, 
+ <span class="ss">:95th-percentile</span> <span class="mf">50.0</span><span class="p">}</span>
+</pre></div>
+
+<h3>
+<a name="timers" class="anchor" href="#timers"><span class="octicon octicon-link"></span></a>Timers</h3>
+
+<div class="highlight highlight-clojure"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.timer</span> <span class="ss">:as</span> <span class="nv">timer</span><span class="p">])</span>
+
+<span class="p">(</span><span class="nf">timer/start</span> <span class="ss">:my-timer</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">Thread/sleep</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">timer/stop</span> <span class="ss">:my-timer</span><span class="p">)</span>
+<span class="mi">2003765859</span> <span class="c1">;; returns the elapsed time since start was called</span>
+<span class="p">(</span><span class="nf">timer/read</span> <span class="ss">:my-timer</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:75th-percentile</span> <span class="mf">2.003765859</span><span class="nv">E9</span>, 
+ <span class="ss">:99th-percentile</span> <span class="mf">2.003765859</span><span class="nv">E9</span>, 
+ <span class="ss">:five-minute-rate</span> <span class="mf">0.1750346638085895</span>, 
+ <span class="ss">:stddev</span> <span class="mf">0.0</span>, 
+ <span class="ss">:mean</span> <span class="mf">2.003765859</span><span class="nv">E9</span>, 
+ <span class="ss">:one-minute-rate</span> <span class="mf">0.10268342380651845</span>, 
+ <span class="ss">:name</span> <span class="ss">:my-timer</span>, 
+ <span class="ss">:median</span> <span class="mf">2.003765859</span><span class="nv">E9</span>, 
+ <span class="ss">:count</span> <span class="mi">1</span>, 
+ <span class="ss">:999th-percentile</span> <span class="mf">2.003765859</span><span class="nv">E9</span>, 
+ <span class="ss">:max</span> <span class="mi">2003765859</span>, 
+ <span class="ss">:mean-rate</span> <span class="mf">0.021349204399746108</span>, 
+ <span class="ss">:min</span> <span class="mi">2003765859</span>, 
+ <span class="ss">:98th-percentile</span> <span class="mf">2.003765859</span><span class="nv">E9</span>, 
+ <span class="ss">:fiteen-minute-rate</span> <span class="mf">0.19130574782060583</span>, 
+ <span class="ss">:95th-percentile</span> <span class="mf">2.003765859</span><span class="nv">E9</span><span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="registry" class="anchor" href="#registry"><span class="octicon octicon-link"></span></a>Registry</h2>
+
+<p><code>schmetrics</code> pretty much hides the <code>metrics</code> registry from normal usage, but there are a few things you might need:</p>
+
+<div class="highlight highlight-clojure"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.registry</span> <span class="ss">:as</span> <span class="nv">registry</span><span class="p">]</span>
+         <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.counter</span> <span class="ss">:as</span> <span class="nv">counter</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">counter/inc</span> <span class="ss">:my-counter</span> <span class="mi">22</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">counter/read</span> <span class="ss">:my-counter0</span>
+<span class="p">{</span><span class="ss">:count</span> <span class="mi">22</span>, <span class="ss">:name</span> <span class="ss">:my-counter</span><span class="p">}</span>
+<span class="p">(</span><span class="nf">registry/remove-metric</span> <span class="ss">:my-counter</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">counter/read</span> <span class="ss">:my-counter</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:count</span> <span class="mi">0</span>, <span class="ss">:name</span> <span class="ss">:my-counter</span><span class="p">}</span>
+<span class="c1">;; note that since registration of a metric is implicit, remove essentially resets a metric, because the next time you call it it will</span>
+<span class="c1">;; automatically re-register</span>
+<span class="p">(</span><span class="nf">registry/get-metric-names</span><span class="p">)</span>
+<span class="p">[</span><span class="ss">:my-counter</span><span class="p">]</span>
+<span class="p">(</span><span class="nf">registery/get-metrics</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:my-counter</span> <span class="o">#</span><span class="nv">&lt;Counter</span> <span class="nv">com.codahale.metrics.Counter</span><span class="o">@</span><span class="mi">7</span><span class="nv">f04eeb6&gt;</span><span class="p">}</span>
+<span class="p">(</span><span class="nf">counter/inc</span> <span class="ss">:my-other-counter</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">registry/get-counters</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:my-other-counter</span> <span class="o">#</span><span class="nv">&lt;Counter</span> <span class="nv">com.codahale.metrics.Counter</span><span class="o">@</span><span class="mi">733636</span><span class="nv">ed&gt;</span>, <span class="ss">:my-counter</span> <span class="o">#</span><span class="nv">&lt;Counter</span> <span class="nv">com.codahale.metrics.Counter</span><span class="o">@</span><span class="mi">7</span><span class="nv">f04eeb6&gt;</span><span class="p">}</span>
+<span class="c1">;; and so on for the other metric types</span>
+</pre></div>
+
+<h2>
+<a name="json" class="anchor" href="#json"><span class="octicon octicon-link"></span></a>JSON</h2>
+
+<p>It's easy enough to turn Clojure data structures into JSON, for sure, but <code>schmetrics</code> includes support for the <code>metrics-json</code> JSONification if you want it:</p>
+
+<div class="highlight highlight-clojure"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.counter</span> <span class="ss">:as</span> <span class="nv">counter</span><span class="p">]</span> 
+     <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.json</span> <span class="ss">:as</span> <span class="nv">json</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">counter/inc</span> <span class="ss">:my-counter</span> <span class="mi">22</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">counter/read</span> <span class="ss">:my-counter</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:count</span> <span class="mi">22</span>, <span class="ss">:name</span> <span class="ss">:my-counter</span><span class="p">}</span>
+<span class="p">(</span><span class="nf">json/as-string</span> <span class="p">(</span><span class="nf">counter/get-counter</span> <span class="ss">:my-counter</span><span class="p">))</span>
+<span class="s">"{\"count\":22}"</span>
+</pre></div>
+
+<p>If you JSONify the registry itself, all of your metrics will be included:</p>
+
+<div class="highlight highlight-clojure"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.registry</span> <span class="ss">:as</span> <span class="nv">registry</span><span class="p">]</span>
+         <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.counter</span> <span class="ss">:as</span> <span class="nv">counter</span><span class="p">]</span>
+         <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.histogram</span> <span class="ss">:as</span> <span class="nv">histogram</span><span class="p">]</span>
+     <span class="o">'</span><span class="p">[</span><span class="nv">schmetrics.json</span> <span class="ss">:as</span> <span class="nv">json</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">counter/inc</span> <span class="ss">:my-counter</span> <span class="mi">22</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">histogram/update</span> <span class="ss">:my-histogram</span> <span class="mi">42</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">json/as-string</span> <span class="p">(</span><span class="nf">registry/get-registry</span><span class="p">))</span>
+<span class="s">"{\"version\":\"3.0.0\",\"gauges\":{},\"counters\":{\"my-counter\":{\"count\":22}},\"histograms\":{\"my-histogram\":{\"count\":1,\"max\":42,\"mean\":42.0,\"min\":42,\"p50\":42.0,\"p75\":42.0,\"p95\":42.0,\"p98\":42.0,\"p99\":42.0,\"p999\":42.0,\"stddev\":0.0}},\"meters\":{},\"\</span>
+<span class="s">timers\":{}}"</span>
+</pre></div>
+
+<h2>
+<a name="history" class="anchor" href="#history"><span class="octicon octicon-link"></span></a>History</h2>
+
+<ul>
+<li>Version 0.2.1 - 05/14/14 - repush with doc updates</li>
+<li>Version 0.2.0 - 05/14/14 - updates to json api, initial health check api, add more registry functionality</li>
+<li>Version 0.1.0 - 05/09/14 - initial version pushed to clojars</li>
+</ul><h2>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>TODO</h2>
+
+<ul>
+<li>initial support for health checks is in, need to clean up and document</li>
+<li>support multiple registries</li>
+</ul><h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Copyright © 2014 Josh Rotenberg</p>
+
+<p>Distributed under the Apache License 2.0</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/joshrotenberg">joshrotenberg</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
