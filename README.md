@@ -44,7 +44,7 @@ This project came after a quick solo brainstorming of something useful and enter
 
 ## Metrics
 
-`schmetrics` has a fairly regular API with a few exceptions noted inline below in the docs. You create a unique metric on the fly by calling it's specific namespaced function with a keyword or string, and then when you want to know the value of the metric, you call it's read function, which will return a map containing the metric specific values and some meta data.
+`schmetrics` has a fairly regular API with a few exceptions noted inline below in the docs. You create a unique metric on the fly by calling its specific namespaced function with a keyword or string (such as `inc` for a counter), and then when you want to know the value of the metric, you call its `read` function, which will return a map containing the metric specific values and some meta data.
 
 ### Gauges
 
