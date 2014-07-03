@@ -82,7 +82,7 @@ A Counter ... counts. Up or down.
 
 ### Meters
 
-Meters measure the rate of an even over time, i.e. a load average.
+Meters measure the rate of an event over time, i.e. a load average.
 
 ```clojure
 (require '[schmetrics.meter :as meter])
