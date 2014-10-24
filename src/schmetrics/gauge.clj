@@ -8,7 +8,7 @@
   ReadMetric
   (read-metric [this] {:value (.getValue this)}))
 
-(defn get-gauge
+(defn ^Gauge get-gauge
   "Get the gauge object from the registry."
   [gauge-name]
   (gauge (get-registry) gauge-name))

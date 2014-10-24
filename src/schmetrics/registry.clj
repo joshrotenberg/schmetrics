@@ -1,11 +1,10 @@
 (ns schmetrics.registry
-  (:require [schmetrics.json :as json])
   (:import [com.codahale.metrics MetricRegistry Counter Gauge 
             Meter Histogram Timer]))
 
 (defonce context (atom {:registry (MetricRegistry.)}))
 
-(defn get-registry 
+(defn ^MetricRegistry get-registry 
   "Returns the MetricRegistry used to register all metrics."
   []
   (get @context :registry))

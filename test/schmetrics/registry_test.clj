@@ -14,7 +14,7 @@
       (= (String. (json/as-bytes r))
          (json/as-string r))
       (with-open [file (clojure.java.io/writer tmp-file)]
-        (json/to-file r file)
+        (json/to-writer r file)
         (= (json/as-string r)
            (slurp tmp-file)))
       (is (= com.codahale.metrics.MetricRegistry (type r)))

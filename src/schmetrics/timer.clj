@@ -26,7 +26,7 @@
        :99th-percentile (.get99thPercentile snapshot)
        :999th-percentile (.get999thPercentile snapshot)})))
 
-(defn get-timer
+(defn ^Timer get-timer
   "Get the timer object from the registry."
   [timer-name]
   (timer (get-registry) timer-name))

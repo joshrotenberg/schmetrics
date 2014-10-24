@@ -21,7 +21,7 @@
           bytes-json (json/as-bytes (meter/get-meter :test-meter-json))]
       (is (= (:count (parse-string string-json true))
              (:count (meter/read :test-meter-json))))
-      (is (= (:count (parse-string (String. bytes-json)))
+      (is (= (:count (parse-string (java.lang.String. bytes-json)))
              (:count (parse-string string-json)))))))
 
 

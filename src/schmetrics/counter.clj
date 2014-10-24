@@ -9,7 +9,7 @@
   Counter
   (read-metric [this] {:count (.getCount this)}))
 
-(defn get-counter
+(defn ^Counter get-counter
   "Get the counter object from the registry."
   [counter-name]
   (counter (get-registry) counter-name))

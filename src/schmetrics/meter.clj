@@ -13,7 +13,7 @@
                        :mean-rate (.getMeanRate this)
                        }))
 
-(defn get-meter
+(defn ^Meter get-meter
   "Get the meter object from the registry."
   [meter-name]
   (meter (get-registry) meter-name))

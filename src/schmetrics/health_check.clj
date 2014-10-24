@@ -5,7 +5,7 @@
 
 (defonce context (atom {:default-registry (HealthCheckRegistry.)}))
 
-(defn get-registry
+(defn ^HealthCheckRegistry get-registry
   "Returns the HealthCheckRegistry used to register all health checks."
   ([]
      (get @context :default-registry))

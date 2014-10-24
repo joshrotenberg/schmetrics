@@ -21,7 +21,7 @@
        :99th-percentile (.get99thPercentile snapshot)
        :999th-percentile (.get999thPercentile snapshot)})))
 
-(defn get-histogram
+(defn ^Histogram get-histogram
   [histogram-name]
   (histogram (get-registry) histogram-name))
 
