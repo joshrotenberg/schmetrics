@@ -25,9 +25,7 @@ A simple Clojure wrapper around Coda Hale's metrics (3.x) library. Support for G
 ## Overview
 
 With leiningen
-```clojure
-[schmetrics "0.2.2"]
-```
+[![Clojars Project](http://clojars.org/schmetrics/latest-version.svg)](http://clojars.org/schmetrics)
 
 or maven
 ```xml
