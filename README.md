@@ -24,10 +24,9 @@ A simple Clojure wrapper around Coda Hale's metrics (3.x) library. Support for G
 ```
 ## Overview
 
-With leiningen
 [![Clojars Project](http://clojars.org/schmetrics/latest-version.svg)](http://clojars.org/schmetrics)
 
-or maven
+or with maven
 ```xml
 <dependency>
   <groupId>schmetrics</groupId>
@@ -206,6 +205,7 @@ timers\":{}}"
 
 ## History
 
+* Version 0.2.2 - 10/24/14 - added json/to-writer, some type hints
 * Version 0.2.1 - 05/14/14 - repush with doc updates
 * Version 0.2.0 - 05/14/14 - updates to json api, initial health check api, add more registry functionality
 * Version 0.1.0 - 05/09/14 - initial version pushed to clojars
