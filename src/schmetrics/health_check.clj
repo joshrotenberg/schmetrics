@@ -32,7 +32,7 @@
 (defn get-healthcheck-names
   "Get the names of registered health checks."
   []
-  (into [] (map keyword (.getNames (get-registry)))))
+  (mapv keyword (.getNames (get-registry))))
 
 (defn- result-to-map
   "Returns a mapified version of the HealthCheck$Result instance."

@@ -17,7 +17,7 @@
 (defn get-metric-names
   "Get a vector of all the registered metric names."
   []
-  (into [] (map keyword (.getNames (get-registry)))))
+  (mapv keyword (.getNames (get-registry))))
 
 (defn- keywordize-keys
   [m]
