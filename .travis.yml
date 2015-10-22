@@ -1,5 +1,6 @@
 lein: lein2
 language: clojure
 sudo: false
+script: lein test-all
 after_script:
   - bash -ex test/coveralls.sh
