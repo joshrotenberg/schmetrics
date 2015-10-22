@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/joshrotenberg/schmetrics.svg?branch=master)](https://travis-ci.org/joshrotenberg/schmetrics)
 
+[![Coverage Status](https://coveralls.io/repos/joshrotenberg/schmetrics/badge.svg?branch=master&service=github)](https://coveralls.io/github/joshrotenberg/schmetrics?branch=master)
+
 A simple Clojure wrapper around Coda Hale's metrics (3.x) library. Support for Gauges, Counters, Meters, Timers and Histograms.
 
 ## Usage
@@ -35,9 +37,9 @@ or with maven
 </dependency>
 ```
 
-`schmetrics` is intended to be a thin Clojure wrapper atop Coda Hale's [metrics](http://metrics.codahale.com/) library for measuring the behavior of various aspects of an application. The Java APIs are fairly straightforward and can fairly easily be used directly via Clojure's interop, but this library ties them up and makes them a little more Clojure-y, managing some of the state behind the scenes and exposing only what's necessary to get the job done. Comments, bugs and patches are welcome. 
+`schmetrics` is intended to be a thin Clojure wrapper atop Coda Hale's [metrics](http://metrics.codahale.com/) library for measuring the behavior of various aspects of an application. The Java APIs are straightforward and can fairly easily be used directly via Clojure's interop, but this library ties them up and makes them a little more Clojure-y, managing some of the state behind the scenes and exposing only what's necessary to get the job done. Comments, bugs and patches are welcome. 
 
-This project came after a quick solo brainstorming of something useful and entertaining to write during Clojure West 2014. I've been using metrics on the Java side for a few weeks and just wanted to see how it might look in Clojure. So yeah.
+This project came after a quick solo brainstorming of something useful and entertaining to write during Clojure West 2014. I've been using metrics on the Java side for a few weeks and just wanted to see how it might look in Clojure.
 
 ## Metrics
 
