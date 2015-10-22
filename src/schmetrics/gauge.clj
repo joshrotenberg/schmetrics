@@ -18,8 +18,8 @@
    be returned."
   [gauge-name gauge-fn]
   (.register (get-registry) (name gauge-name)
-             (proxy [com.codahale.metrics.Gauge] []
-               (getValue [] (gauge-fn)))))
+             (reify com.codahale.metrics.Gauge
+               (getValue [_] (gauge-fn)))))
 
 (defn read
   "Read the current value for gauge-name."
