@@ -1,5 +1,5 @@
 (ns schmetrics.histogram
-  (:refer-clojure :exclude [read])
+  (:refer-clojure :exclude [read update])
   (:require [schmetrics.registry :refer [ReadMetric read-metric get-registry 
                                          histogram context]])
   (:require [schmetrics.json :refer [get-mapper]])

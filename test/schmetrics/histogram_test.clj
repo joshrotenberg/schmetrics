@@ -19,7 +19,7 @@
       (is (= 10 (:min r)))
       (is (= 30.0 (:mean r)))
       (is (= 30.0 (:median r)))
-      (is (= 45.0 (:75th-percentile r)))
+      (is (= 40.0 (:75th-percentile r)))
       (is (= 50.0 (:95th-percentile r)))
       (is (= 50.0 (:98th-percentile r)))
       (is (= 50.0 (:99th-percentile r)))
