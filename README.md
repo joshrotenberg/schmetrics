@@ -207,6 +207,7 @@ timers\":{}}"
 
 ## History
 
+* Version 0.2.3 - 10/22/15 - just a little cleanup, updated clojure and metrics versions, broader testing
 * Version 0.2.2 - 10/24/14 - added json/to-writer, some type hints
 * Version 0.2.1 - 05/14/14 - repush with doc updates
 * Version 0.2.0 - 05/14/14 - updates to json api, initial health check api, add more registry functionality
