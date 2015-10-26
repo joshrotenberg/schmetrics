@@ -33,7 +33,7 @@ or with maven
 <dependency>
   <groupId>schmetrics</groupId>
   <artifactId>schmetrics</artifactId>
-  <version>0.2.2</version>
+  <version>0.2.3</version>
 </dependency>
 ```
 
@@ -169,7 +169,7 @@ Histograms measure the statistical distribution in a stream of data.
 ;; automatically re-register
 (registry/get-metric-names)
 [:my-counter]
-(registery/get-metrics)
+(registry/get-metrics)
 {:my-counter #<Counter com.codahale.metrics.Counter@7f04eeb6>}
 (counter/inc :my-other-counter)
 (registry/get-counters)
