@@ -1,4 +1,4 @@
-(defproject schmetrics "0.2.3"
+(defproject schmetrics "0.3.0"
   :description "Clojure Bindings for metrics"
   :url "https://github.com/joshrotenberg/schmetrics"
   :license {:name "Apache 2.0"

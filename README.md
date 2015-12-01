@@ -33,7 +33,7 @@ or with maven
 <dependency>
   <groupId>schmetrics</groupId>
   <artifactId>schmetrics</artifactId>
-  <version>0.2.3</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
@@ -150,6 +150,15 @@ Histograms measure the statistical distribution in a stream of data.
  :98th-percentile 2.003765859E9, 
  :fiteen-minute-rate 0.19130574782060583, 
  :95th-percentile 2.003765859E9}
+
+;; or wrap the body of some stuff
+(def elapsed (timer/with-timer :wrap-timer
+		  ;; do some stuff here
+		  ))
+;; :wrap-timer should also be available via read ...
+(timer/read :wrap-timer)
+;; { ... }
+	
 ```
 
 ## Registry
@@ -158,7 +167,8 @@ Histograms measure the statistical distribution in a stream of data.
 
 ```clojure
 (require '[schmetrics.registry :as registry]
-         '[schmetrics.counter :as counter])
+         '[schmetrics.counter :as counter]
+	 '[schemtrics.meter :as meter])
 (counter/inc :my-counter 22)
 (counter/read :my-counter0
 {:count 22, :name :my-counter}
@@ -175,6 +185,10 @@ Histograms measure the statistical distribution in a stream of data.
 (registry/get-counters)
 {:my-other-counter #<Counter com.codahale.metrics.Counter@733636ed>, :my-counter #<Counter com.codahale.metrics.Counter@7f04eeb6>}
 ;; and so on for the other metric types
+;; if you want to read all of the metrics from the registry, you can without caring about each type
+(registry/read-metrics)
+{:my-counter {:count 22}, :my-meter {:count 1, :fifteen-minute-rate 0.0, :five-minute-rate 0.0, :one-minute-rate 0.0, :mean-rate 0.527726003063366}, :my-other-counter {:count 1}}
+
 ```
 
 ## JSON
@@ -207,6 +221,7 @@ timers\":{}}"
 
 ## History
 
+* Version 0.3.0 - 12/01/15 - more test cleanup, added (registry/read-metrics)
 * Version 0.2.3 - 10/22/15 - just a little cleanup, updated clojure and metrics versions, broader testing
 * Version 0.2.2 - 10/24/14 - added json/to-writer, some type hints
 * Version 0.2.1 - 05/14/14 - repush with doc updates
