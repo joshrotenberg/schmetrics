@@ -39,11 +39,11 @@ or with maven
 
 `schmetrics` is intended to be a thin Clojure wrapper atop Coda Hale's [metrics](http://metrics.codahale.com/) library for measuring the behavior of various aspects of an application. The Java APIs are straightforward and can fairly easily be used directly via Clojure's interop, but this library ties them up and makes them a little more Clojure-y, managing some of the state behind the scenes and exposing only what's necessary to get the job done. Comments, bugs and patches are welcome. 
 
-This project came after a quick solo brainstorming of something useful and entertaining to write during Clojure West 2014. I've been using metrics on the Java side for a few weeks and just wanted to see how it might look in Clojure.
+This project came after a quick solo brainstorming of something useful and entertaining to write during Clojure West 2014. I've been using metrics on the Java side for a few weeks and just wanted to see how it might look in Clojure. Since then I've been using schmetrics in both personal and work projects and so far it seems pretty stable.
 
 ## Metrics
 
-`schmetrics` has a fairly regular API with a few exceptions noted inline below in the docs. You create a unique metric on the fly by calling its specific namespaced function with a keyword or string (such as `inc` for a counter), and then when you want to know the value of the metric, you call its `read` function, which will return a map containing the metric specific values and some meta data.
+`schmetrics` has a fairly regular API with a few exceptions noted inline below in the docs. You create a unique metric on the fly by calling its specific namespaced function with a keyword or string (such as `inc` for a counter), and then when you want to know the value of the metric, you call its `read` function, which will return a map containing the metric specific values and some metadata.
 
 ### Gauges
 
@@ -168,7 +168,7 @@ Histograms measure the statistical distribution in a stream of data.
 ```clojure
 (require '[schmetrics.registry :as registry]
          '[schmetrics.counter :as counter]
-	 '[schemtrics.meter :as meter])
+	 '[schmetrics.meter :as meter])
 (counter/inc :my-counter 22)
 (counter/read :my-counter0
 {:count 22, :name :my-counter}
@@ -188,7 +188,6 @@ Histograms measure the statistical distribution in a stream of data.
 ;; if you want to read all of the metrics from the registry, you can without caring about each type
 (registry/read-metrics)
 {:my-counter {:count 22}, :my-meter {:count 1, :fifteen-minute-rate 0.0, :five-minute-rate 0.0, :one-minute-rate 0.0, :mean-rate 0.527726003063366}, :my-other-counter {:count 1}}
-
 ```
 
 ## JSON
@@ -235,7 +234,7 @@ timers\":{}}"
 
 ## License
 
-Copyright © 2014 Josh Rotenberg
+Copyright © 2015 Josh Rotenberg
 
 Distributed under the Apache License 2.0
 
