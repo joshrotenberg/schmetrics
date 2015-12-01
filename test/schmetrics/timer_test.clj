@@ -34,3 +34,11 @@
              (:count (parse-string json true)))))
     (is (= true (remove-metric :test-timer-json)))))
 
+(deftest timer-test-wtih-timer
+  (testing "with-timer macro"
+    (let [t (timer/with-timer :test-with-timer
+              (Thread/sleep 2000))]
+      (is (= 1 (:count (timer/read :test-with-timer))))
+      (is (= (:min (timer/read :test-with-timer)) (:max (timer/read :test-with-timer))))
+      (is (= t (:min (timer/read :test-with-timer))))
+      (is (= true (remove-metric :test-with-timer))))))
