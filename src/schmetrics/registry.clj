@@ -10,7 +10,7 @@
   (get @context :registry))
 
 (defn remove-metric
-  "Removes the metric from the registry."
+  "Removes the metric from the registry. Returns true if the metric was removed, false otherwise."
   [metric-name]
   (.remove (get-registry) (name metric-name)))
 
@@ -53,8 +53,14 @@
   []
   (keywordize-keys (.getMetrics (get-registry))))
 
+
 (defprotocol ReadMetric
   (read-metric [this] "Read the various values of a metric and return a map"))
+
+(defn read-metrics
+  "Returns a map keyed on all currently registered metrics and valued on their current read value."
+  []
+  (reduce-kv (fn [m k v] (assoc m k (read-metric v))) {} (get-metrics)))
 
 (defprotocol LookupMetric
   (counter [this n] "register/lookup a counter from the registry")

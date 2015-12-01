@@ -7,7 +7,7 @@
                  [io.dropwizard.metrics/metrics-core "3.1.2"]
                  [io.dropwizard.metrics/metrics-json "3.1.2"]
                  [io.dropwizard.metrics/metrics-healthchecks "3.1.2"]]
-  :plugins [[codox "0.8.0"]]
+  :plugins [[lein-codox "0.9.0"]]
   :profiles {:test {:dependencies [[cheshire "5.3.1"]]
                     :plugins [[lein-cloverage "1.0.6"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
